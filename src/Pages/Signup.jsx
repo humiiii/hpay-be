@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../utils/api";
 
 function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
       const response = await api.post("/user/register", {
@@ -20,10 +19,16 @@ function Signup() {
         password,
       });
 
-      alert("Signup successful! Please log in.");
-      navigate("/login");
+      if (response.status === 201) {
+        toast.success("Signup successful! Please log in.");
+        navigate("/login");
+      } else {
+        toast.error("Unexpected response from the server.");
+      }
     } catch (error) {
-      setError(error.response?.data?.message || error.message);
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      toast.error(errorMessage);
     }
   };
 
@@ -31,9 +36,6 @@ function Signup() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
       <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
-        {error && (
-          <p className="mb-4 text-red-500 text-sm text-center">{error}</p>
-        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-1 font-medium">Name</label>
