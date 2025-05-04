@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { validateToken } from "../redux/authSlice";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
-  const isLoggedIn = false;
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    dispatch(validateToken());
+  }, [dispatch]);
+
+  const handleLogoutClick = () => {
+    toast.info("You have logged out.");
+  };
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
       <h1 className="text-xl font-bold text-blue-600">MyApp</h1>
       <div className="space-x-4">
-        {!isLoggedIn ? (
+        {!isAuthenticated ? (
           <>
             <Link to="/" className="text-blue-500 hover:underline">
               Home
@@ -34,7 +46,11 @@ const Navbar = () => {
             <Link to="/mywallet" className="text-blue-500 hover:underline">
               My Wallet
             </Link>
-            <Link to="/logout" className="text-blue-500 hover:underline">
+            <Link
+              to="/logout"
+              className="text-blue-500 hover:underline"
+              onClick={handleLogoutClick}
+            >
               Logout
             </Link>
           </>
@@ -43,4 +59,5 @@ const Navbar = () => {
     </nav>
   );
 };
+
 export default Navbar;

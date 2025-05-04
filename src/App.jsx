@@ -11,6 +11,8 @@ import WithdrawMoney from "./Pages/WithdrawMoney";
 import Transaction from "./Pages/Transaction";
 import ViewWalletBalance from "./Pages/ViewWalletBalance";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Logout from "./components/Logout";
 
 function App() {
   return (
@@ -20,13 +22,63 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/create-wallet" element={<CreateWallet />} />
-          <Route path="/deposit" element={<Deposit />} />
-          <Route path="/transfer" element={<SendMoney />} />
-          <Route path="/withdraw" element={<WithdrawMoney />} />
-          <Route path="/transaction" element={<Transaction />} />
-          <Route path="/view-balance" element={<ViewWalletBalance />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-wallet"
+            element={
+              <ProtectedRoute>
+                <CreateWallet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/deposit"
+            element={
+              <ProtectedRoute>
+                <Deposit />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transfer"
+            element={
+              <ProtectedRoute>
+                <SendMoney />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/withdraw"
+            element={
+              <ProtectedRoute>
+                <WithdrawMoney />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transaction"
+            element={
+              <ProtectedRoute>
+                <Transaction />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/view-balance"
+            element={
+              <ProtectedRoute>
+                <ViewWalletBalance />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Layout>
     </Router>

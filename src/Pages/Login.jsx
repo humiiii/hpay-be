@@ -11,14 +11,30 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/auth/login", { email, password });
+      const response = await api.post("/user/login", { email, password });
 
-      const { token, userId } = res.data;
-      localStorage.setItem("token", token);
-      toast.success("Login successful!");
-      navigate("/dashboard");
-    } catch (err) {
-      toast.error("Login failed!");
+      if (response.status === 200) {
+        toast.success("Login successful!");
+
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+
+        // Check if the user has a wallet
+        const walletResponse = await api.get("/user/wallet");
+        console.log(walletResponse);
+
+        if (walletResponse.data.hasWallet) {
+          navigate("/dashboard");
+        } else {
+          navigate("/create-wallet");
+        }
+      } else {
+        toast.error("Unexpected response from the server.");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      toast.error(errorMessage);
     }
   };
 
