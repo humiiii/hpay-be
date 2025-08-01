@@ -18,16 +18,37 @@ function CreateWallet() {
 
   const createWallet = async () => {
     setLoading(true);
+    setMessage("");
     try {
-      await api.post(`/wallet/create`);
+      // Check if user already has a wallet
+      const walletCheck = await api.get("/user/wallet");
+      if (walletCheck.data.hasWallet) {
+        setMessage("You already have a wallet.");
+        setLoading(false);
+        return;
+      }
+      // Create wallet
+      const response = await api.post(`/wallet/create`);
       setMessage("Wallet created successfully!");
+      // Optionally store wallet id in localStorage
+      if (response.data.wallet && response.data.wallet._id) {
+        localStorage.setItem("walletId", response.data.wallet._id);
+      }
       navigate("/dashboard");
     } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Wallet already exists"
+      ) {
+        setMessage("You already have a wallet.");
+      } else {
+        setMessage("Wallet creation failed. Please try again.");
+      }
       console.error(
         "Error creating wallet:",
         error.response?.data || error.message
       );
-      setMessage("Wallet creation failed. Please try again.");
     } finally {
       setLoading(false);
     }

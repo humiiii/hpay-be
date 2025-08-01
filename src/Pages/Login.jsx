@@ -21,7 +21,7 @@ function Login() {
 
         // Check if the user has a wallet
         const walletResponse = await api.get("/user/wallet");
-        console.log(walletResponse);
+        console.log(`walletResponse: ${JSON.stringify(walletResponse.data)}`);
 
         if (walletResponse.data.hasWallet) {
           navigate("/dashboard");
