@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import api from "../utils/api.js";
 
+const initialState = {
+  isAuthenticated: null,
+};
+
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    isAuthenticated: null,
-  },
+  initialState,
   reducers: {
     setAuthStatus(state, action) {
       state.isAuthenticated = action.payload;
@@ -15,19 +17,18 @@ const authSlice = createSlice({
 
 export const validateToken = () => async (dispatch) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    try {
-      const response = await api.get("/user/validate-token", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log(response);
+  if (!token) {
+    dispatch(setAuthStatus(false));
+    return;
+  }
 
-      dispatch(setAuthStatus(response.data.isValid));
-    } catch (error) {
-      console.error("Token validation failed:", error);
-      dispatch(setAuthStatus(false));
-    }
-  } else {
+  try {
+    const { data } = await api.get("/user/validate-token", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch(setAuthStatus(!!data.isValid));
+  } catch (error) {
+    console.error("Token validation failed:", error);
     dispatch(setAuthStatus(false));
   }
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
@@ -14,6 +14,8 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Logout from "./components/Logout";
 
+const NotFound = () => <Navigate to="/" replace />; // Or your own 404 page component
+
 function App() {
   return (
     <Router>
@@ -23,6 +25,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
+
           <Route
             path="/dashboard"
             element={
@@ -72,13 +75,15 @@ function App() {
             }
           />
           <Route
-            path="/view-balance"
+            path="/wallet-balance"
             element={
               <ProtectedRoute>
                 <ViewWalletBalance />
               </ProtectedRoute>
             }
           />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </Router>

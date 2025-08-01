@@ -6,8 +6,8 @@ import api from "../utils/api";
 
 const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const [loading, setLoading] = useState(true); // <-- Add loading state
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -15,28 +15,27 @@ const ProtectedRoute = ({ children }) => {
         const token = localStorage.getItem("token");
         if (!token) {
           dispatch(setAuthStatus(false));
-          setLoading(false);
           return;
         }
 
-        const response = await api.get("/user/validate-token", {
+        const { data } = await api.get("/user/validate-token", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        dispatch(setAuthStatus(response.data.isValid));
-      } catch (error) {
+        dispatch(setAuthStatus(data.isValid));
+      } catch {
         dispatch(setAuthStatus(false));
       } finally {
-        setLoading(false); // <-- Stop loading once check is complete
+        setLoading(false);
       }
     };
 
     checkAuth();
   }, [dispatch]);
 
-  if (loading) return null; // Or show a spinner/loading UI
+  if (loading) return null; 
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
